@@ -1,0 +1,19 @@
+{
+    "name": "telegiss/php_pro_3",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+
+
+    "authors": [
+        {
+            "name": "sergey-telegin",
+            "email": "tssee.ram@gmail.com"
+        }
+    ],
+    "require": {
+
+    }
+}
