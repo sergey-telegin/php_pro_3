@@ -1,6 +1,7 @@
 FROM php:8.2-fpm
 ARG WORKDIR
 WORKDIR ${WORKDIR}
+RUN usermod -u 1001 www-data && groupmod -g 1001 www-data
 
 RUN apt-get -y update && apt-get -y install git unzip rsync
 
