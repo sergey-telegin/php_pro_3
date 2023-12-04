@@ -16,7 +16,6 @@ class ShortUrlGenerator
         for ($i = 0; $i < $length; $i++) {
             $code .= $arr[random_int(0, count($arr) - 1)];
         }
-
         return 'https://newshorturl.ua/' . $code;
     }
 }

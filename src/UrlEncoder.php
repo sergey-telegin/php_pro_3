@@ -11,7 +11,6 @@ class UrlEncoder implements IUrlEncoder
 
     public function __construct(Validator $validator, Repository $repository, ShortUrlGenerator $generator)
     {
-
         $this->validator = $validator;
         $this->repository = $repository;
         $this->generator = $generator;
@@ -19,20 +18,19 @@ class UrlEncoder implements IUrlEncoder
 
     public function encode(string $url): string
     {
-        if (!$this->validator->isVarUrl($url)) {
-            throw new \InvalidArgumentException();
-        }
-        $shortUrl = $this->generator->generationShortUrl();
-
-        if (!$this->validator->isVarUnique($shortUrl)) {
+        if (!$this->validator->isUrlValid($url)) {
             throw new \InvalidArgumentException();
         }
 
-        $isSavedUrl = $this->repository->saveNewUrl($shortUrl, $url);
-
-        if (!$isSavedUrl){
-            throw new \InvalidArgumentException();
-        }
+        do {
+            $shortUrl = $this->generator->generationShortUrl();
+            try {
+                $this->repository->saveNewUrl($shortUrl, $url);
+                $success = true;
+            } catch (NotUniqueShortUrlException) {
+                $success = false;
+            }
+        } while (!$success);
 
         return $shortUrl;
 

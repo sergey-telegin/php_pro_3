@@ -4,7 +4,7 @@ namespace App;
 
 class UrlDecoder implements IUrlDecoder
 {
-    protected $repository;
+    protected Repository $repository;
 
     public function __construct(Repository $repository)
     {

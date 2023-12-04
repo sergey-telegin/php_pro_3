@@ -4,6 +4,7 @@ namespace App;
 
 class Repository
 {
+    protected const FILE_PATH = __DIR__ . '/../base.txt';
     protected $shortUrl;
 
     protected $longUrl;
@@ -11,39 +12,38 @@ class Repository
     public function findUrl(string $shortUrl): ?string
     {
 
-        $base = __DIR__ . '/../base.txt';
+        if (!(file_exists(self::FILE_PATH) && is_readable(self::FILE_PATH))) {
+            return null;
+        }
 
-        if (file_exists($base) && is_readable($base)) {
+        $content = file(self::FILE_PATH, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-            $lines = file($base, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($content as $line) {
+            [$savedShortUrl, $longUrl] = explode(' - ', $line);
 
-            foreach ($lines as $line) {
-                [$savedShortUrl, $longUrl] = explode(' - ', $line);
+            if ($shortUrl === $savedShortUrl) {
 
-                if ($shortUrl === $savedShortUrl) {
-
-                    return $longUrl;
-                }
+                return $longUrl;
             }
         }
 
         return null;
     }
 
-    public function saveNewUrl(string $shortUrl, string $longUrl): bool
+    public function isUrlUnique(string $url): bool
     {
-        $base = __DIR__ . '/../base.txt';
-        $isVarUnique = new Validator();
-        if ($isVarUnique->isVarUnique($shortUrl) === true) {
-            $handle = fopen("base.txt", "a+");
-            fwrite($handle, $shortUrl . ' - ' . $longUrl . PHP_EOL);
-            fclose($handle);
-            return true;
-        } else {
-            return false;
-        }
+        return !$this->findUrl($url);
     }
 
-
+    public function saveNewUrl(string $shortUrl, string $longUrl): bool
+    {
+        if (!$this->isUrlUnique($shortUrl)) {
+            throw new NotUniqueShortUrlException();
+        }
+        $handle = fopen(self::FILE_PATH, "a+");
+        fwrite($handle, $shortUrl . ' - ' . $longUrl . PHP_EOL);
+        fclose($handle);
+        return true;
+    }
 
 }

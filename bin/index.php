@@ -9,11 +9,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $repository = new Repository();
 $urlGenerator = new ShortUrlGenerator();
-$validator = new Validator();
+$validator = new Validator($repository);
 $encoder = new UrlEncoder($validator, $repository, $urlGenerator);
 $decoder = new \App\UrlDecoder($repository);
 
-$shortUrl = $encoder->encode('http://www.kaspi.kz');
+$shortUrl = $encoder->encode('https://lingomost.com/gramm/nachalo/');
 
 $longUrl = $decoder->decode($shortUrl);
 
